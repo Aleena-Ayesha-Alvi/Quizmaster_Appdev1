@@ -1,0 +1,45 @@
+{% extends "admin_layout.html" %}
+
+{% block content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card bg-dark text-white">  <!-- Dark background with white text -->
+          <div class="card-header text-center bg-secondary">
+            <h4>Add Chapters</h4>
+          </div>
+          <div class="card-body">
+            <form action="/add_chapters/{{chapter_id}}/{{name}}" method="POST">
+              <div class="mb-3">
+                <label for="chapter_id" class="form-label">Chapter ID</label>
+                <input type="number" class="form-control bg-dark text-white border-secondary placeholder-light" 
+                       name="chapter_id" id="chapter_id" value="{{chapter_id}}" readonly>
+              </div>
+              <div class="mb-3">
+                <label for="chapter_name" class="form-label">Chapter Name</label>
+                <input type="text" class="form-control bg-dark text-white border-secondary placeholder-light" 
+                       name="chapter_name" id="chapter_name" placeholder="Chapter Name" required>
+              </div>
+              <div class="mb-3">
+                <label for="chapter_description" class="form-label">Chapter Description</label>
+                <input type="text" class="form-control bg-dark text-white border-secondary placeholder-light" 
+                       name="chapter_description" id="chapter_description" placeholder="Chapter Description" required>
+              </div>
+              <div class="mb-3 d-flex justify-content-between">
+                <button type="submit" class="btn btn-success">Submit</button>
+                <a href="/admin_dashboard/{{name}}" class="btn btn-danger">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Placeholder Color Fix */
+    .placeholder-light::placeholder {
+      color: rgba(255, 255, 255, 0.6); /* Light Gray Placeholder */
+    }
+  </style>
+{% endblock %}

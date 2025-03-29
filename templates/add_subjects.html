@@ -1,0 +1,40 @@
+{% extends "admin_layout.html" %}
+
+{% block content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card bg-dark text-white">  <!-- Dark background -->
+          <div class="card-header text-center bg-secondary">
+            <h4>Add Subjects</h4>
+          </div>
+          <div class="card-body">
+            <form action="/add_subjects/{{name}}" method="POST">
+              <div class="mb-3">
+                <label for="subject_name" class="form-label">Subject Name</label>
+                <input type="text" class="form-control bg-dark text-white border-secondary placeholder-light"
+                       name="subject_name" id="subject_name" placeholder="Subject Name" required>
+              </div>
+              <div class="mb-3">
+                <label for="subject_description" class="form-label">Subject Description</label>
+                <input type="text" class="form-control bg-dark text-white border-secondary placeholder-light"
+                       name="subject_description" id="subject_description" placeholder="Subject Description" required>
+              </div>
+              <div class="mb-3 d-flex justify-content-between">
+                <button type="submit" class="btn btn-success">Submit</button>
+                <a href="/admin_dashboard/{{name}}" class="btn btn-danger">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Placeholder Color Fix */
+    .placeholder-light::placeholder {
+      color: rgba(255, 255, 255, 0.6); /* Light Gray Placeholder */
+    }
+  </style>
+{% endblock %}
