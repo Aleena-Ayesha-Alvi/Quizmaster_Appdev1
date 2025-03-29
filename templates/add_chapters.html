@@ -9,12 +9,7 @@
             <h4>Add Chapters</h4>
           </div>
           <div class="card-body">
-            <form action="/add_chapters/{{chapter_id}}/{{name}}" method="POST">
-              <div class="mb-3">
-                <label for="chapter_id" class="form-label">Chapter ID</label>
-                <input type="number" class="form-control bg-dark text-white border-secondary placeholder-light" 
-                       name="chapter_id" id="chapter_id" value="{{chapter_id}}" readonly>
-              </div>
+            <form action="/add_chapters/{{subject_id}}/{{name}}" method="POST">
               <div class="mb-3">
                 <label for="chapter_name" class="form-label">Chapter Name</label>
                 <input type="text" class="form-control bg-dark text-white border-secondary placeholder-light" 
