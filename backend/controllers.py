@@ -407,3 +407,78 @@ def scores(name):
 
     return render_template('score.html', name=name, user_scores=user_scores)  # Render the scores page with the fetched scores
 
+
+# Admin Summary Route
+from collections import defaultdict
+from flask import session, render_template
+from datetime import datetime
+import matplotlib.pyplot as plt
+import io
+import base64
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
+@app.route('/admin_summary', methods=['GET'])
+def admin_summary():
+    # Permanent admin
+    name = session.get("username", "Admin")  
+
+    # Quiz attempts data
+    quiz_attempts = db.session.query(Score.time_taken, Subject.subj_name.label('subject')) \
+        .join(Quiz, Score.quiz_id == Quiz.id) \
+        .join(Chapter, Quiz.chapter_id == Chapter.id) \
+        .join(Subject, Chapter.subject_id == Subject.id) \
+        .all()
+
+    # Using defaultdict for counting months and subjects
+    month_counts = defaultdict(int)
+    subject_counts = defaultdict(int)
+
+    for time_stamp, subject in quiz_attempts:
+        month = time_stamp.strftime('%B')  # Extract month
+        month_counts[month] += 1
+        subject_counts[subject] += 1
+
+    # Monthly Bar Chart (Enhanced for Dark Theme)
+    fig_month_bar, ax = plt.subplots(figsize=(6, 4), facecolor='#121212')
+    ax.set_facecolor('#121212')
+    ax.bar(month_counts.keys(), month_counts.values(), color='#00E5FF', edgecolor='white')
+    ax.set_xlabel('Month', color='white')
+    ax.set_ylabel('Total Quiz Attempts', color='white')
+    ax.set_title('Overall Quiz Attempts (Monthly)', color='white')
+
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
+    ax.spines['bottom'].set_color('white')
+    ax.spines['left'].set_color('white')
+
+    img_month_bar = io.BytesIO()
+    FigureCanvas(fig_month_bar).print_png(img_month_bar)
+    img_month_bar.seek(0)
+    month_bar_chart_url = base64.b64encode(img_month_bar.getvalue()).decode('utf8')
+
+    # Subject Pie Chart (Enhanced for Dark Theme)
+    fig_subject_pie = plt.figure(figsize=(6, 4), facecolor='#121212')
+    colors = ['#FF5733', '#33FF57', '#3380FF', '#FF33C4', '#FFD700']
+    plt.pie(
+        subject_counts.values(), labels=subject_counts.keys(), autopct='%1.1f%%',
+        startangle=90, colors=colors, textprops={'color': 'white'}
+    )
+    plt.title('Overall Quiz Attempts by Subject', color='white')
+
+    img_subject_pie = io.BytesIO()
+    FigureCanvas(fig_subject_pie).print_png(img_subject_pie)
+    img_subject_pie.seek(0)
+    subject_pie_chart_url = base64.b64encode(img_subject_pie.getvalue()).decode('utf8')
+
+    # Get the list of registered students (users with role = 1)
+    users_list = User.query.filter(User.role == 1).all()
+
+    return render_template(
+        'admin_summary.html',
+        name=name,
+        month_bar_chart_url=month_bar_chart_url,
+        subject_pie_chart_url=subject_pie_chart_url,
+        users_list=users_list  # Pass the list of registered students to the template
+    )
+
+
