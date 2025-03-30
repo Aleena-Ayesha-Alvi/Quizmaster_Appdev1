@@ -1,0 +1,49 @@
+{% extends "admin_layout.html" %}
+
+{% block content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card bg-dark text-white">
+          <div class="card-header text-center bg-secondary">
+            <h4>Add Quiz</h4>
+          </div>
+          <div class="card-body">
+            <form action="/add_quiz/{{chapter_id}}/{{name}}" method="POST">
+              <div class="mb-3">
+                <label for="quiz_name" class="form-label">Quiz Name</label>
+                <input type="text" class="form-control bg-dark text-white border-secondary placeholder-light" 
+                       name="quiz_name" id="quiz_name" placeholder="Quiz Name" required>
+              </div>
+              <div class="mb-3">
+                <label for="quiz_date" class="form-label">Quiz Date</label>
+                <input type="date" class="form-control bg-dark text-white border-secondary placeholder-light" 
+                       name="quiz_date" id="quiz_date" required>
+              </div>
+              <div class="mb-3">
+                <label for="duration" class="form-label">Duration (HH:MM)</label>
+                <input type="time" class="form-control bg-dark text-white border-secondary placeholder-light" 
+                       name="duration" id="duration" required>
+              </div>
+              <div class="mb-3">
+                <label for="remarks" class="form-label">Remarks</label>
+                <textarea class="form-control bg-dark text-white border-secondary placeholder-light" 
+                          name="remarks" id="remarks" rows="3" required></textarea>
+              </div>
+              <div class="mb-3 d-flex justify-content-between">
+                <button type="submit" class="btn btn-success">Submit</button>
+                <a href="/admin_dashboard/{{name}}" class="btn btn-danger">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .placeholder-light::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+  </style>
+{% endblock %}

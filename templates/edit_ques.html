@@ -1,0 +1,50 @@
+{% extends 'admin_layout.html' %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="text-center my-4" style="color:white;">Edit Question</h1>
+
+    <form method="POST">
+      <div class="form-group" style="color:white;">
+        <label for="question">Question</label>
+        <input type="text" class="form-control" id="question" name="question" value="{{ question.question }}" required>
+      </div>
+
+      <div class="form-group" style="color:white;">
+        <label for="opt1">Option 1</label>
+        <input type="text" class="form-control" id="opt1" name="opt1" value="{{ question.opt1 }}" required>
+      </div>
+
+      <div class="form-group" style="color:white;">
+        <label for="opt2">Option 2</label>
+        <input type="text" class="form-control" id="opt2" name="opt2" value="{{ question.opt2 }}" required>
+      </div>
+
+      <div class="form-group" style="color:white;">
+        <label for="opt3">Option 3</label>
+        <input type="text" class="form-control" id="opt3" name="opt3" value="{{ question.opt3 }}" required>
+      </div>
+
+      <div class="form-group" style="color:white;">
+        <label for="opt4">Option 4</label>
+        <input type="text" class="form-control" id="opt4" name="opt4" value="{{ question.opt4 }}" required>
+      </div>
+
+      <!-- Correct Option Dropdown -->
+      <div class="form-group" style="color:white;">
+        <label for="correct_option">Correct Option</label>
+        <select class="form-control" id="correct_option" name="correct_option" required>
+          <option value="opt1" {% if question.correct_option == 'opt1' %}selected{% endif %}>Option 1</option>
+          <option value="opt2" {% if question.correct_option == 'opt2' %}selected{% endif %}>Option 2</option>
+          <option value="opt3" {% if question.correct_option == 'opt3' %}selected{% endif %}>Option 3</option>
+          <option value="opt4" {% if question.correct_option == 'opt4' %}selected{% endif %}>Option 4</option>
+        </select>
+      </div>
+
+      <br>
+
+      <!-- Save Button -->
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+  </div>
+{% endblock %}

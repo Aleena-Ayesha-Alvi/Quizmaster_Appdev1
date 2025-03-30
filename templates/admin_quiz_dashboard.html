@@ -1,0 +1,55 @@
+{% extends 'admin_layout.html' %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="text-center my-4" style="color:white;">Quizzes</h1>
+
+    {% if quizzes %}
+      <div class="row">
+        {% for quiz in quizzes %}
+          <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card mb-4">
+              <div class="card-body">
+                <h5 class="card-title text-primary font-weight-bold">{{ quiz.quiz_name }}</h5>
+                <ul class="list-unstyled">
+                  <li><strong>Chapter:</strong> {{ quiz.chapters.chapter_name }}</li>
+                  <li><strong>Date:</strong> {{ quiz.quiz_date }}</li>
+                  <li><strong>Duration:</strong> {{ quiz.duration }}</li>
+                  <li><strong>Remarks:</strong> {{ quiz.remarks }}</li>
+                  <li><strong>Number of Questions:</strong> {{ quiz.questions|length }}</li>
+                </ul>
+                <div class="d-flex justify-content-between">
+                  <!-- Edit Button with Pencil Icon -->
+                  <a href="/edit_quiz/{{ quiz.id }}/{{ name }}" class="btn btn-warning btn-sm">
+                    <i class="fas fa-pencil-alt"></i> <!-- Pencil Icon -->
+                  </a>
+
+                  <!-- Delete Button with Trash Icon -->
+                  <a href="/delete_quiz/{{ quiz.id }}/{{ name }}" class="btn btn-danger btn-sm"
+                     onclick="return confirm('Are you sure you want to delete this quiz?')">
+                    <i class="fas fa-trash-alt"></i> <!-- Trash Icon -->
+                  </a>
+                </div>
+
+                <div class="d-flex justify-content-between mt-3">
+                  <!-- Add Question Button with Plus Icon -->
+                  <a href="/add_question/{{ quiz.id }}/{{ name }}" class="btn btn-success btn-sm">
+                    <i class="fas fa-plus"></i> <!-- Plus Icon -->
+                    Add Question
+                  </a>
+                  <!-- Edit Questions Button with Edit Icon -->
+                  <a href="/quiz_questions/{{ quiz.id }}/{{ name }}" class="btn btn-info btn-sm">
+                    <i class="fas fa-edit"></i> <!-- Edit Icon -->
+                    Edit Questions
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <h3 class="text-center">No Quizzes Found</h3>
+    {% endif %}
+  </div>
+{% endblock %}
