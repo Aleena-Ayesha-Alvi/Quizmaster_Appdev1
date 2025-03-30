@@ -59,7 +59,7 @@ def login():
     return render_template('login.html', err_msg="")
 
 
-
+# this route is to redirect the admin to the admin dashboard
 
 @app.route('/admin_dashboard/<name>', methods=['GET', 'POST'])
 def admin_dashboard(name):
@@ -68,7 +68,7 @@ def admin_dashboard(name):
 
 
 
-# Add Subject Route
+# this route is to add subjects to the database
 @app.route('/add_subjects/<name>', methods=['GET', 'POST'])
 def add_subjects(name):
     if request.method == 'POST':
@@ -81,7 +81,7 @@ def add_subjects(name):
 
     return render_template('add_subjects.html', name=name)
 
-# Edit Subject Route
+# this route is to edit subjects in the database
 @app.route('/edit_subject/<id>/<name>', methods=['GET', 'POST'])
 def edit_subject(id, name):
     subject = Subject.query.get(id)
@@ -93,7 +93,7 @@ def edit_subject(id, name):
     
     return render_template('edit_subject.html', name=name, subject=subject)
 
-# Delete Subject Route
+# this route is to delete subjects from the database
 @app.route('/delete_subject/<id>/<name>', methods=['GET', 'POST'])
 def delete_subject(id, name):
     subject = Subject.query.get(id)
@@ -102,7 +102,7 @@ def delete_subject(id, name):
         db.session.commit()
     return redirect(url_for('admin_dashboard', name=name))
 
-# Add Chapter Route
+# this route is to add chapter to the database under different subjects
 @app.route('/add_chapters/<subject_id>/<name>', methods=['GET', 'POST'])
 def add_chapters(subject_id, name):
     if request.method == 'POST':
@@ -116,7 +116,7 @@ def add_chapters(subject_id, name):
     return render_template('add_chapters.html', name=name, subject_id=subject_id)
 
 
-# Edit Chapter Route
+# this route is to edit chapter in the database under different subjects
 @app.route('/edit_chapter/<id>/<name>', methods=['GET', 'POST'])
 def edit_chapter(id, name):
     chapter = Chapter.query.get(id)
@@ -128,7 +128,7 @@ def edit_chapter(id, name):
     
     return render_template('edit_chapter.html', name=name, chapter=chapter)
 
-# Delete Chapter Route
+# this route is to delete chapter from the database
 @app.route('/delete_chapter/<id>/<name>', methods=['GET', 'POST'])
 def delete_chapter(id, name):
     chapter = Chapter.query.get(id)
@@ -137,7 +137,7 @@ def delete_chapter(id, name):
         db.session.commit()
     return redirect(url_for('admin_dashboard', name=name))
 
-# Add Quiz Route
+# this route is to add quiz to the database under different chapters
 @app.route('/add_quiz/<chapter_id>/<name>', methods=['GET', 'POST'])
 def add_quiz(chapter_id, name):
     if request.method == 'POST':
@@ -146,7 +146,7 @@ def add_quiz(chapter_id, name):
         duration = request.form.get('duration')  
         remarks = request.form.get('remarks')  
         
-        # Convert the duration to time type
+        # this is to convert duration to time type
         duration = datetime.strptime(duration, '%H:%M').time()
         
         new_quiz = Quiz(
@@ -162,18 +162,19 @@ def add_quiz(chapter_id, name):
 
     return render_template('add_quiz.html', name=name, chapter_id=chapter_id)
 
-# Edit Quiz Route
+# this route is to edit quiz in the database under different chapters
 @app.route('/edit_quiz/<id>/<name>', methods=['GET', 'POST'])
 def edit_quiz(id, name):
     quiz = Quiz.query.get(id)
     if request.method == 'POST':
         quiz.quiz_name = request.form.get('quiz_name')
         quiz.quiz_desc = request.form.get('quiz_description')
-        quiz.quiz_date = request.form.get('quiz_date')  # Handle quiz_date
-        quiz.duration = request.form.get('duration')  # Handle duration
-        quiz.remarks = request.form.get('remarks')  # Handle remarks
+        quiz.quiz_date = request.form.get('quiz_date')  
+        quiz.duration = request.form.get('duration')  
+        quiz.remarks = request.form.get('remarks')  
         
-        # Convert the duration to time type
+        # this is to convert duration to time type
+
         quiz.duration = datetime.strptime(quiz.duration, '%H:%M').time()
         
         # Convert quiz_date to date type
@@ -184,7 +185,7 @@ def edit_quiz(id, name):
     
     return render_template('edit_quiz.html', name=name, quiz=quiz)
 
-# Delete Quiz Route
+# this route is to delete quiz from the database under different chapters
 @app.route('/delete_quiz/<id>/<name>', methods=['GET', 'POST'])
 def delete_quiz(id, name):
     quiz = Quiz.query.get(id)
@@ -195,11 +196,14 @@ def delete_quiz(id, name):
         flash('Quiz not found!', 'error')
     return redirect(url_for('admin_dashboard', name=name))
 
-#admin quiz dashboard
+# this route is to get the quiz dashboard for admin
 @app.route('/admin_quiz_dashboard/<name>', methods=['GET', 'POST'])
 def admin_quiz_dashboard(name):
     quizzes = Quiz.query.all()
     return render_template('admin_quiz_dashboard.html', name=name, quizzes=quizzes)
+
+
+ #this route is to add question to databse under different quizzes
 
 @app.route('/add_question/<int:quiz_id>/<name>', methods=['GET', 'POST'])
 def add_question(quiz_id, name):
@@ -213,7 +217,7 @@ def add_question(quiz_id, name):
         opt4 = request.form['opt4']
         correct_option = request.form['correct_option']
 
-        # Create a new question 
+        # here we are creating a question object
         question = Question(
             quiz_id=quiz.id,
             question=question_text,
@@ -236,6 +240,7 @@ def add_question(quiz_id, name):
 
     return render_template('add_ques.html', quiz=quiz, name=name)
 
+
 @app.route('/quiz_questions/<int:quiz_id>/<name>', methods=['GET'])
 def quiz_questions(quiz_id, name):
     quiz = Quiz.query.get_or_404(quiz_id)
@@ -243,7 +248,7 @@ def quiz_questions(quiz_id, name):
 
     return render_template('quiz_questions.html', quiz=quiz, questions=questions, name=name)
 
-
+# this route is to delete question from the database under different quizzes
 @app.route('/delete_question/<int:question_id>/<int:quiz_id>/<name>', methods=['GET'])
 def delete_question(question_id, quiz_id, name):
     question = Question.query.get_or_404(question_id)
@@ -256,11 +261,13 @@ def delete_question(question_id, quiz_id, name):
 
     return redirect(url_for('quiz_questions', quiz_id=quiz_id, name=name))
 
+# this route is to edit questions in the database under different quizzes
+
 @app.route('/edit_question/<int:question_id>/<name>', methods=['GET', 'POST'])
 def edit_question(question_id, name):
     question = Question.query.get_or_404(question_id)  
 
-    # Handle form submission to update the question
+    # here we are handling form submission under the edit question route to update the question
     if request.method == 'POST':
         question_text = request.form['question']
         opt1 = request.form['opt1']
@@ -285,8 +292,8 @@ def edit_question(question_id, name):
     return render_template('edit_ques.html', question=question, name=name)
 
 
-
-#user fadboard
+# this route is to get the user dashboard for user
+#user dasboard
 @app.route('/user_dashboard/<name>', methods=['GET', 'POST'])
 def user_dashboard(name):
     quizzes = Quiz.query.all()
@@ -294,20 +301,20 @@ def user_dashboard(name):
     today = datetime.today().date()
     return render_template('user_dashboard.html', name=name, quizzes=quizzes, today=today)
 
-#view quiz
+# this route is to get/view the quiz details for user
 @app.route('/view_quiz_details/<int:quiz_id>/<name>', methods=['GET', 'POST'])
 def view_quiz(quiz_id, name):
     quiz = Quiz.query.get_or_404(quiz_id)
     return render_template('view_quiz_details.html', name=name, quiz=quiz)
 
-#start quiz
+# thiis route is to startt the quiz
 @app.route('/start_quizuser/<int:quiz_id>/<name>', methods=['GET', 'POST'])
 def start_quizuser(quiz_id, name):
     quiz = Quiz.query.get_or_404(quiz_id)
     questions = Question.query.filter_by(quiz_id=quiz.id).all()
     return render_template('start_quizuser.html', name=name, quiz=quiz, questions=questions)
 
-# Submit Quiz
+# this route is to submit the quiz
 @app.route('/submit_quiz/<int:quiz_id>/<name>', methods=['POST'])
 def submit_quiz(quiz_id, name):
     quiz = Quiz.query.filter_by(id=quiz_id).first()  
@@ -320,7 +327,7 @@ def submit_quiz(quiz_id, name):
             if user_answer == question.correct_option:
                 total_score += 1
 
-        # Save the score to the database
+        #  here we are saving the score to the database
         newscore = Score(
             quiz_id=quiz_id, 
             user_id=user.id,  
@@ -335,7 +342,7 @@ def submit_quiz(quiz_id, name):
         
     return render_template('user_score.html', name=name, user_scores=user_scores)
 
-#searching 
+# here we are searching the subject and chapter in the database  for admin dashboard
 def search_subject(search_txt):
     subjects = Subject.query.filter(Subject.subj_name.ilike(f"%{search_txt}%")).all()
     return subjects
@@ -345,6 +352,7 @@ def search_chapter(search_txt):
     subjects = [chapter.subjects for chapter in chapters]
     return subjects
 
+# here we are searching the quiz name or subject name in the database for user dashboard
 def search_quiz_name_or_subject(search_term):
     if search_term:
         # Search quizzes based on subject name or quiz name
@@ -355,7 +363,7 @@ def search_quiz_name_or_subject(search_term):
     return []
 
 
-
+# this route is to search the subject and chapter in the database for admin dashboard
 @app.route('/adminsearch/<name>', methods=['GET', 'POST'])
 def search(name):
     if request.method == 'POST':
@@ -370,7 +378,7 @@ def search(name):
             return render_template('admin_dashboard.html', name=name, subjects=by_chapter)
     return redirect(url_for('admin_dashboard', name=name))
 
-
+# this route is to search the quiz name or subject name in the database for user dashboard  
 @app.route('/usersearch/<name>', methods=['GET', 'POST'])
 def usersearch(name):
     if request.method == 'POST':
@@ -385,8 +393,8 @@ def usersearch(name):
     return redirect(url_for('user_dashboard', name=name))
 
 
+# this route is to get the score of the user from the database for user dashboard
 
-#user score
 @app.route('/scores/<name>', methods=['GET', 'POST'])
 def scores(name):
     user = User.query.filter_by(username=name).first()  
@@ -411,23 +419,26 @@ import io
 import base64
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
+# this route is to get the admin summary of the quiz attempts and user details from the database   
 @app.route('/admin_summary', methods=['GET'])
 def admin_summary():
     #admin
     name = session.get("username", "Admin")  
 
-    # Quiz attempts data
+    # here we are getting the quiz attempts data from the database 
+
     quiz_attempts = db.session.query(Score.time_taken, Subject.subj_name.label('subject')) \
         .join(Quiz, Score.quiz_id == Quiz.id) \
         .join(Chapter, Quiz.chapter_id == Chapter.id) \
         .join(Subject, Chapter.subject_id == Subject.id) \
         .all()
-    #defaultdict for counting
+    
+    #defaultdict for counting the number of attempts
     month_counts = defaultdict(int)
     subject_counts = defaultdict(int)
 
     for time_stamp, subject in quiz_attempts:
-        month = time_stamp.strftime('%B')  # Extract month
+        month = time_stamp.strftime('%B')  # extracting month from timestamp
         month_counts[month] += 1
         subject_counts[subject] += 1
 
@@ -483,6 +494,7 @@ import base64
 from io import BytesIO
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
+# this route is to get the user summary of the quiz attempts and user details from the database 
 @app.route('/user_summary/<name>', methods=['GET'])
 def summary(name):
     user = User.query.filter_by(username=name).first()
