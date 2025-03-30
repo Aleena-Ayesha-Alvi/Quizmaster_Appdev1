@@ -10,6 +10,8 @@ from datetime import datetime
 def home():
     return render_template('index.html')
 
+# this route is to get the user registered on the database
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -38,6 +40,7 @@ def register():
 
     return render_template('signup.html', err_msg="")
 
+# this route is to get the user logged in to the system
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -54,6 +57,8 @@ def login():
         return render_template('login.html', err_msg="Invalid User Name or Password")
 
     return render_template('login.html', err_msg="")
+
+
 
 
 @app.route('/admin_dashboard/<name>', methods=['GET', 'POST'])
@@ -137,9 +142,9 @@ def delete_chapter(id, name):
 def add_quiz(chapter_id, name):
     if request.method == 'POST':
         quiz_name = request.form.get('quiz_name')
-        quiz_date = request.form.get('quiz_date')  # Adding quiz_date
-        duration = request.form.get('duration')  # Adding duration
-        remarks = request.form.get('remarks')  # Adding remarks
+        quiz_date = request.form.get('quiz_date')  
+        duration = request.form.get('duration')  
+        remarks = request.form.get('remarks')  
         
         # Convert the duration to time type
         duration = datetime.strptime(duration, '%H:%M').time()
@@ -198,7 +203,7 @@ def admin_quiz_dashboard(name):
 
 @app.route('/add_question/<int:quiz_id>/<name>', methods=['GET', 'POST'])
 def add_question(quiz_id, name):
-    quiz = Quiz.query.get_or_404(quiz_id)  # Fetch the quiz object by quiz_id
+    quiz = Quiz.query.get_or_404(quiz_id)  
 
     if request.method == 'POST':
         question_text = request.form['question']
@@ -208,7 +213,7 @@ def add_question(quiz_id, name):
         opt4 = request.form['opt4']
         correct_option = request.form['correct_option']
 
-        # Create a new question and associate it with the quiz
+        # Create a new question 
         question = Question(
             quiz_id=quiz.id,
             question=question_text,
@@ -224,7 +229,6 @@ def add_question(quiz_id, name):
 
         flash('Question added successfully!', 'success')
 
-        # Check which button was clicked
         if 'add_more' in request.form:
             return redirect(url_for('add_question', quiz_id=quiz_id, name=name))
         else:
@@ -234,7 +238,6 @@ def add_question(quiz_id, name):
 
 @app.route('/quiz_questions/<int:quiz_id>/<name>', methods=['GET'])
 def quiz_questions(quiz_id, name):
-    # Fetch all questions associated with the quiz
     quiz = Quiz.query.get_or_404(quiz_id)
     questions = Question.query.filter_by(quiz_id=quiz_id).all()
 
@@ -243,7 +246,6 @@ def quiz_questions(quiz_id, name):
 
 @app.route('/delete_question/<int:question_id>/<int:quiz_id>/<name>', methods=['GET'])
 def delete_question(question_id, quiz_id, name):
-    # Fetch the question by ID
     question = Question.query.get_or_404(question_id)
     
     # Delete the question
