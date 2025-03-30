@@ -1,4 +1,4 @@
-#App Routes
+#App Routes 
 
 from flask import Flask,render_template,request,redirect,url_for,flash,session
 from .models import *
@@ -21,7 +21,7 @@ def register():
         college_name = request.form.get('college_name')
         mobile_no = request.form.get('mobile_no')
 
-        # Convert date input to Python date format
+        # Convert date input to Python date type
         date_of_birth_date = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
 
         # Check if user already exists
@@ -141,7 +141,7 @@ def add_quiz(chapter_id, name):
         duration = request.form.get('duration')  # Adding duration
         remarks = request.form.get('remarks')  # Adding remarks
         
-        # Convert the duration to time format
+        # Convert the duration to time type
         duration = datetime.strptime(duration, '%H:%M').time()
         
         new_quiz = Quiz(
@@ -168,10 +168,10 @@ def edit_quiz(id, name):
         quiz.duration = request.form.get('duration')  # Handle duration
         quiz.remarks = request.form.get('remarks')  # Handle remarks
         
-        # Convert the duration to time format
+        # Convert the duration to time type
         quiz.duration = datetime.strptime(quiz.duration, '%H:%M').time()
         
-        # Convert quiz_date to date format
+        # Convert quiz_date to date type
         quiz.quiz_date = datetime.strptime(quiz.quiz_date, '%Y-%m-%d').date()
         
         db.session.commit()
@@ -284,10 +284,6 @@ def edit_question(question_id, name):
 
 
 
-
-
-
-
 #user fadboard
 @app.route('/user_dashboard/<name>', methods=['GET', 'POST'])
 def user_dashboard(name):
@@ -312,30 +308,29 @@ def start_quizuser(quiz_id, name):
 # Submit Quiz
 @app.route('/submit_quiz/<int:quiz_id>/<name>', methods=['POST'])
 def submit_quiz(quiz_id, name):
-    # Fetch the quiz using quiz_id
-    quiz = Quiz.query.filter_by(id=quiz_id).first()  # Correcting this to fetch quiz object
+    quiz = Quiz.query.filter_by(id=quiz_id).first()  
     user = User.query.filter_by(username=name).first()
 
     if quiz and user:
         total_score = 0
-        for question in quiz.questions:  # Accessing questions related to the quiz
+        for question in quiz.questions:  
             user_answer = request.form.get(f'question_{question.id}')
-            if user_answer == question.correct_option:  # Checking correct answer
+            if user_answer == question.correct_option:
                 total_score += 1
 
         # Save the score to the database
         newscore = Score(
-            quiz_id=quiz_id,  # Corrected to quiz_id
-            user_id=user.id,  # Assuming user ID is correctly fetched
+            quiz_id=quiz_id, 
+            user_id=user.id,  
             time_taken=datetime.now(),
-            total_score=total_score  # Corrected variable name from 'score' to 'total_score'
+            total_score=total_score  
         )
         db.session.add(newscore)
         db.session.commit()
         user_scores = db.session.query(Score, Quiz).join(Quiz).filter(Score.user_id == user.id).all()
 
 
-        # Render the score page after submitting
+        
     return render_template('user_score.html', name=name, user_scores=user_scores)
 
 #searching 
@@ -373,7 +368,6 @@ def search(name):
             return render_template('admin_dashboard.html', name=name, subjects=by_chapter)
     return redirect(url_for('admin_dashboard', name=name))
 
-from datetime import datetime
 
 @app.route('/usersearch/<name>', methods=['GET', 'POST'])
 def usersearch(name):
@@ -410,8 +404,6 @@ def scores(name):
 
 # Admin Summary Route
 from collections import defaultdict
-from flask import session, render_template
-from datetime import datetime
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -419,7 +411,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
 @app.route('/admin_summary', methods=['GET'])
 def admin_summary():
-    # Permanent admin
+    #admin
     name = session.get("username", "Admin")  
 
     # Quiz attempts data
@@ -428,8 +420,7 @@ def admin_summary():
         .join(Chapter, Quiz.chapter_id == Chapter.id) \
         .join(Subject, Chapter.subject_id == Subject.id) \
         .all()
-
-    # Using defaultdict for counting months and subjects
+    #defaultdict for counting
     month_counts = defaultdict(int)
     subject_counts = defaultdict(int)
 
@@ -438,7 +429,7 @@ def admin_summary():
         month_counts[month] += 1
         subject_counts[subject] += 1
 
-    # Monthly Bar Chart (Enhanced for Dark Theme)
+    # Monthly Bar Chart 
     fig_month_bar, ax = plt.subplots(figsize=(6, 4), facecolor='#121212')
     ax.set_facecolor('#121212')
     ax.bar(month_counts.keys(), month_counts.values(), color='#00E5FF', edgecolor='white')
@@ -456,7 +447,7 @@ def admin_summary():
     img_month_bar.seek(0)
     month_bar_chart_url = base64.b64encode(img_month_bar.getvalue()).decode('utf8')
 
-    # Subject Pie Chart (Enhanced for Dark Theme)
+    #Subject Pie Chart 
     fig_subject_pie = plt.figure(figsize=(6, 4), facecolor='#121212')
     colors = ['#FF5733', '#33FF57', '#3380FF', '#FF33C4', '#FFD700']
     plt.pie(
@@ -470,7 +461,6 @@ def admin_summary():
     img_subject_pie.seek(0)
     subject_pie_chart_url = base64.b64encode(img_subject_pie.getvalue()).decode('utf8')
 
-    # Get the list of registered students (users with role = 1)
     users_list = User.query.filter(User.role == 1).all()
 
     return render_template(
@@ -478,7 +468,7 @@ def admin_summary():
         name=name,
         month_bar_chart_url=month_bar_chart_url,
         subject_pie_chart_url=subject_pie_chart_url,
-        users_list=users_list  # Pass the list of registered students to the template
+        users_list=users_list  
     )
 
 
@@ -488,7 +478,6 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import io
 import base64
-from flask import render_template
 from io import BytesIO
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
@@ -513,7 +502,7 @@ def summary(name):
         subject_counts[subject] = subject_counts.get(subject, 0) + 1
         month_counts[month] = month_counts.get(month, 0) + 1
 
-    # Enhanced Subject-wise Pie Chart
+    # Subject-wise Pie Chart
     fig_subject_pie = plt.figure(figsize=(6, 4), facecolor='#121212')
     colors = ['#FF5733', '#33FF57', '#3380FF', '#FF33C4', '#FFD700']  # Bright colors for dark theme
     plt.pie(
@@ -527,7 +516,7 @@ def summary(name):
     img_subject_pie.seek(0)
     subject_pie_chart_url = base64.b64encode(img_subject_pie.getvalue()).decode('utf8')
 
-    # Enhanced Month-wise Bar Chart
+    #Month-wise Bar Chart
     fig_month_bar, ax = plt.subplots(figsize=(6, 4), facecolor='#121212')
     ax.set_facecolor('#121212')
     ax.bar(month_counts.keys(), month_counts.values(), color='#00E5FF', edgecolor='white')
