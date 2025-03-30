@@ -1,0 +1,65 @@
+{% extends 'user_layout.html' %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="text-center my-4" style="color:white;">Upcoming Quizzes</h1>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="alert alert-{{ messages[0][0] }}" id="flashMessage">
+          {% for category, message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+        <script>
+          setTimeout(function() {
+            document.getElementById('flashMessage').style.display = 'none';
+          }, 2000);
+        </script>
+      {% endif %}
+    {% endwith %}
+
+    {% if quizzes %}
+      <div class="row">
+        {% for quiz in quizzes %}
+          <div class="col-sm-6 mb-4"> <!-- Added mb-4 for spacing between rows -->
+            <div class="card mb-4"> <!-- Added mb-4 for spacing between cards -->
+              <div class="card-body">
+                <h3 class="card-title text-black">{{ quiz.quiz_name }}</h3>
+                <p class="card-text">
+                  <i class="fas fa-list-ol"></i> Number of Questions: {{ quiz.questions | length }}<br>
+                  <i class="fas fa-calendar-check"></i> Scheduled Date: {{ quiz.quiz_date.strftime('%d/%m/%Y') }}<br>
+                  <i class="fas fa-hourglass-start"></i> Duration: {{ quiz.duration.strftime('%H:%M') }}<br>
+                </p>
+
+                <div class="d-flex justify-content-between">
+                  <!-- View Quiz Button -->
+                  <a href="/view_quiz_details/{{ quiz.id }}/{{ name }}" class="btn btn-info btn-sm">
+                    <i class="fas fa-search"></i> View Quiz
+                  </a>
+                  {% if quiz.quiz_date == today %}
+                    <a href="/start_quizuser/{{ quiz.id }}/{{ name }}" class="btn btn-success btn-sm">
+                      <i class="fas fa-rocket"></i> Start Quiz
+                    </a>
+                  {% elif quiz.quiz_date > today %}
+                    <button class="btn btn-warning btn-sm" onclick="alert('This quiz is not live yet!')">
+                      <i class="fas fa-pause-circle"></i> Not Live Yet
+                    </button>
+                  {% else %}
+                    <button class="btn btn-danger btn-sm" onclick="alert('Quiz date has passed!')">
+                      <i class="fas fa-exclamation-triangle"></i> Expired
+                    </button>
+                  {% endif %}
+                </div>
+
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <h3 class="text-center">No Quizzes Found</h3>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "user_layout.html" %}
+
+{% block content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card bg-dark text-white"> <!-- Dark background with white text -->
+          <div class="card-header text-center bg-secondary">
+            <h4>Quiz Details</h4>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="quiz_id" class="form-label">Quiz ID</label>
+              <input type="text" class="form-control bg-dark text-white border-secondary placeholder-light" 
+                     id="quiz_id" value="{{ quiz.id }}" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="subject" class="form-label">Subject</label>
+              <input type="text" class="form-control bg-dark text-white border-secondary placeholder-light" 
+                     id="subject" value="{{ quiz.chapters.subjects.subj_name }}" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="chapter" class="form-label">Chapter</label>
+              <input type="text" class="form-control bg-dark text-white border-secondary placeholder-light" 
+                     id="chapter" value="{{ quiz.chapters.chapter_name }}" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="no_of_questions" class="form-label">Number of Questions</label>
+              <input type="text" class="form-control bg-dark text-white border-secondary placeholder-light" 
+                     id="no_of_questions" value="{{ quiz.questions | length }}" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="scheduled_date" class="form-label">Scheduled Date</label>
+              <input type="text" class="form-control bg-dark text-white border-secondary placeholder-light" 
+                     id="scheduled_date" value="{{ quiz.quiz_date.strftime('%d/%m/%Y') }}" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="duration" class="form-label">Duration (hh:mm)</label>
+              <input type="text" class="form-control bg-dark text-white border-secondary placeholder-light" 
+                     id="duration" value="{{ quiz.duration.strftime('%H:%M') }}" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="remarks" class="form-label">Remarks</label>
+              <textarea class="form-control bg-dark text-white border-secondary placeholder-light" 
+                        id="remarks" rows="3" readonly>{{ quiz.remarks }}</textarea>
+            </div>
+            
+            <div class="mt-4 d-flex justify-content-between">
+              <a href="/user_dashboard/{{ name }}" class="btn btn-danger">Close</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Placeholder Color Fix */
+    .placeholder-light::placeholder {
+      color: rgba(255, 255, 255, 0.6); /* Light Gray Placeholder */
+    }
+  </style>
+{% endblock %}

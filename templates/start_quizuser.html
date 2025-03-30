@@ -1,0 +1,105 @@
+{% extends "user_layout.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card bg-dark text-white shadow-lg">
+        <div class="card-header bg-secondary text-center">
+          <h4>{{ quiz.quiz_name }} - Quiz Started...</h4>
+        </div>
+        <div class="card-body">
+          <form action="/submit_quiz/{{ quiz.id }}/{{ name }}" method="POST">
+            {% for question in quiz.questions %}
+            <div class="mb-4 p-3 rounded shadow-sm bg-light">
+              <div class="d-flex flex-column">
+                <label class="form-label text-dark h5">
+                  <b>Q{{ loop.index }}. {{ question.question }}</b>
+                </label>
+                <div class="mt-2">
+                  <!-- Option 1 -->
+                  <div class="form-check option-card">
+                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="option1_{{ question.id }}" value="opt1" required>
+                    <label class="form-check-label" for="option1_{{ question.id }}">
+                      {{ question.opt1 }}
+                    </label>
+                  </div>
+                  <!-- Option 2 -->
+                  <div class="form-check option-card">
+                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="option2_{{ question.id }}" value="opt2" required>
+                    <label class="form-check-label" for="option2_{{ question.id }}">
+                      {{ question.opt2 }}
+                    </label>
+                  </div>
+                  <!-- Option 3 -->
+                  <div class="form-check option-card">
+                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="option3_{{ question.id }}" value="opt3" required>
+                    <label class="form-check-label" for="option3_{{ question.id }}">
+                      {{ question.opt3 }}
+                    </label>
+                  </div>
+                  <!-- Option 4 -->
+                  <div class="form-check option-card">
+                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="option4_{{ question.id }}" value="opt4" required>
+                    <label class="form-check-label" for="option4_{{ question.id }}">
+                      {{ question.opt4 }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+            <div class="text-center mt-5">
+              <button type="submit" class="btn btn-success btn-lg px-5" id="submitBtn">Submit Quiz</button>
+              <a href="/user_dashboard/{{ name }}" class="btn btn-danger btn-lg px-5">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Placeholder Color Fix */
+  .placeholder-light::placeholder {
+    color: rgba(255, 255, 255, 0.6); /* Light Gray Placeholder */
+  }
+
+  .form-check-input:checked {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+
+  .form-check-input:focus {
+    box-shadow: none;
+  }
+
+  .form-check-label {
+    font-size: 1.1rem;
+    color: #343a40;
+  }
+
+  .form-check {
+    margin-bottom: 15px;
+  }
+
+  .card-body {
+    background-color: #f8f9fa;
+  }
+
+  .bg-light {
+    background-color: #e9ecef !important;
+  }
+
+  .option-card {
+    border-radius: 5px;
+    padding: 10px;
+  }
+
+  .btn-lg {
+    font-size: 1.25rem;
+    padding: 10px 30px;
+  }
+</style>
+{% endblock %}
