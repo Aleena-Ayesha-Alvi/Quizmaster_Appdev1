@@ -1,0 +1,43 @@
+{% extends "user_layout.html" %}
+
+{% block content %}
+  <div class="container mt-4">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card bg-dark text-white shadow-sm">
+          <div class="card-header bg-secondary text-center">
+            <h4 class="mb-0">User Quiz Scores</h4>
+          </div>
+          <div class="card-body">
+            {% if user_scores %}
+              <table class="table table-hover text-center text-white">
+                <thead class="table-light">
+                  <tr>
+                    <th>Quiz Name</th>
+                    <th>Date & Time</th>
+                    <th>Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for score, quiz in user_scores %}
+                    <tr>
+                      <td>{{ quiz.quiz_name }}</td>
+                      <td>{{ score.time_taken.strftime('%Y-%m-%d %H:%M') }}</td>
+                      <td><strong>{{ score.total_score }}</strong></td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <p class="text-muted text-center" style="color: white;">No quiz scores available.</p>
+            {% endif %}
+          </div>
+          <div class="card-footer text-center">
+            <a href="/user_dashboard/{{ name }}" class="btn btn-danger">Back to Quizzes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
