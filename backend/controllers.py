@@ -482,3 +482,72 @@ def admin_summary():
     )
 
 
+# User Summary Route
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import io
+import base64
+from flask import render_template
+from io import BytesIO
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
+@app.route('/user_summary/<name>', methods=['GET'])
+def summary(name):
+    user = User.query.filter_by(username=name).first()
+
+    user_scores = (
+        db.session.query(Score, Quiz.quiz_name, Subject.subj_name.label('subject'), Score.time_taken)
+        .join(Quiz, Score.quiz_id == Quiz.id)
+        .join(Chapter, Quiz.chapter_id == Chapter.id)
+        .join(Subject, Chapter.subject_id == Subject.id)
+        .filter(Score.user_id == user.id)
+        .all()
+    )
+
+    subject_counts = {}
+    month_counts = {}
+
+    for score, quiz_name, subject, time_taken in user_scores:
+        month = time_taken.strftime('%B')
+        subject_counts[subject] = subject_counts.get(subject, 0) + 1
+        month_counts[month] = month_counts.get(month, 0) + 1
+
+    # Enhanced Subject-wise Pie Chart
+    fig_subject_pie = plt.figure(figsize=(6, 4), facecolor='#121212')
+    colors = ['#FF5733', '#33FF57', '#3380FF', '#FF33C4', '#FFD700']  # Bright colors for dark theme
+    plt.pie(
+        subject_counts.values(), labels=subject_counts.keys(), autopct='%1.1f%%',
+        startangle=90, colors=colors, textprops={'color': 'white'}
+    )
+    plt.title('Subject-wise Quiz Attempts', color='white')
+
+    img_subject_pie = io.BytesIO()
+    FigureCanvas(fig_subject_pie).print_png(img_subject_pie)
+    img_subject_pie.seek(0)
+    subject_pie_chart_url = base64.b64encode(img_subject_pie.getvalue()).decode('utf8')
+
+    # Enhanced Month-wise Bar Chart
+    fig_month_bar, ax = plt.subplots(figsize=(6, 4), facecolor='#121212')
+    ax.set_facecolor('#121212')
+    ax.bar(month_counts.keys(), month_counts.values(), color='#00E5FF', edgecolor='white')
+    ax.set_xlabel('Month', color='white')
+    ax.set_ylabel('Attempt Count', color='white')
+    ax.set_title('Month-wise Quiz Attempts', color='white')
+
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
+    ax.spines['bottom'].set_color('white')
+    ax.spines['left'].set_color('white')
+
+    img_month_bar = io.BytesIO()
+    FigureCanvas(fig_month_bar).print_png(img_month_bar)
+    img_month_bar.seek(0)
+    month_bar_chart_url = base64.b64encode(img_month_bar.getvalue()).decode('utf8')
+
+    return render_template(
+        'user_summary.html', name=name, subject_counts=subject_counts, month_counts=month_counts,
+        subject_pie_chart_url=subject_pie_chart_url, month_bar_chart_url=month_bar_chart_url
+    )
+
+
